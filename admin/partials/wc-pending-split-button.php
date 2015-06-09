@@ -12,4 +12,4 @@
 ?>
 
 <!-- This file should primarily consist of HTML with a little bit of PHP. -->
-<button type="button" class="button" >Move to split order</button>
+<button type="button" class="button" id="wc_split_button" data-order_id="<?php echo $order_id;?>">Move to split order</button>

@@ -1,32 +1,16 @@
 (function( $ ) {
 	'use strict';
+	$(function(){
 
-	/**
-	 * All of the code for your admin-specific JavaScript source
-	 * should reside in this file.
-	 *
-	 * Note that this assume you're going to use jQuery, so it prepares
-	 * the $ function reference to be used within the scope of this
-	 * function.
-	 *
-	 * From here, you're able to define handlers for when the DOM is
-	 * ready:
-	 *
-	 * $(function() {
-	 *
-	 * });
-	 *
-	 * Or when the window is loaded:
-	 *
-	 * $( window ).load(function() {
-	 *
-	 * });
-	 *
-	 * ...and so on.
-	 *
-	 * Remember that ideally, we should not attach any more than a single DOM-ready or window-load handler
-	 * for any particular page. Though other scripts in WordPress core, other plugins, and other themes may
-	 * be doing this, we should try to minimize doing that in our own work.
-	 */
-
+		$('#wc_split_button').click(function(){
+			var order_item_ids=[];
+			var order_id = $(this).data('order_id');
+			$("#order_line_items .item").has('.check-column input:checked').each(function(index, el) {
+				order_item_ids.push($(el).data('order_item_id'));
+			});
+			$.post(ajaxurl, {'action': 'split_order_items', 'order_id': order_id, 'order_item_ids': order_item_ids}, function(data, textStatus, xhr) {
+				/*optional stuff to do after success */
+			});
+		})
+	})
 })( jQuery );
