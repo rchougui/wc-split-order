@@ -15,7 +15,7 @@
  * @wordpress-plugin
  * Plugin Name:       WC Pending Split
  * Plugin URI:        http://richpress.org/plugins/wcpendingsplit
- * Description:       This is a short description of what the plugin does. It's displayed in the WordPress admin area.
+ * Description:       Small plugin to split failed orders into smaller one through an admin dashboard widget.
  * Version:           1.0.0
  * Author:            Riadh Chougui
  * Author URI:        http://richpress.org
@@ -72,4 +72,7 @@ function run_wc_pending_split() {
 	$plugin->run();
 
 }
-run_wc_pending_split();
+if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
+    run_wc_pending_split();
+}
+
