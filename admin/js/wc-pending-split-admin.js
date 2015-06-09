@@ -9,7 +9,7 @@
 				order_item_ids.push($(el).data('order_item_id'));
 			});
 			$.post(ajaxurl, {'action': 'split_order_items', 'order_id': order_id, 'order_item_ids': order_item_ids}, function(data, textStatus, xhr) {
-				/*optional stuff to do after success */
+				$("#order_line_items .item").has('.check-column input:checked').remove();
 			});
 		})
 	})

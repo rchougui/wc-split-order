@@ -111,4 +111,51 @@ class Wc_Pending_Split_Admin {
 			require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/wc-pending-split-button.php';
 		}
 	}
+	/**
+	 * Handler for "split_order_items" ajax call.
+	 *
+	 * @since    1.0.0
+	 */
+	public function split_order_items_callback() {
+		//Bail if missing information
+		if(!isset($_POST['order_id']) || !isset($_POST['order_item_ids'])) {
+			return false;
+		}
+
+		//Sanitize input
+		$order_id = intval( $_POST['order_id'] );
+		$order_item_ids = array();
+		foreach ($_POST['order_item_ids'] as $item_id) {
+			$order_item_ids[] = intval($item_id);
+		}
+
+		//Creating new order
+		$new_order = $this->create_sub_order($order_id);
+		
+		foreach ($order_item_ids as $item_id) {
+			//update the order id of the selected item to new created split order.
+			wc_update_order_item($item_id, array('order_id'=>$new_order));
+		}
+		echo "success";
+
+	}
+	
+	/**
+	 * Creates an order and insert it to the database.
+	 *
+	 * @since    1.0.0
+	 */
+	private function create_sub_order($id = false){
+		$args = array();
+		if ($id) {
+			$original_order = new WC_Order($id);
+			
+		}
+		$order = wc_create_order();
+
+		return $order->id;
+
+	}
 }
+
+	
