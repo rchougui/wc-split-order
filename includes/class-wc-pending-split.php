@@ -154,6 +154,7 @@ class Wc_Pending_Split {
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
+		$this->loader->add_action( 'woocommerce_order_item_add_action_buttons', $plugin_admin , 'split_order_button' );
 
 	}
 

@@ -100,4 +100,14 @@ class Wc_Pending_Split_Admin {
 
 	}
 
+	/**
+	 * Displays the plugin's button within the failed order's area.
+	 *
+	 * @since    1.0.0
+	 */
+	public function split_order_button( $order ) {
+		if("wc-failed" == $order->post_status) {
+			require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/wc-pending-split-button.php';
+		}
+	}
 }

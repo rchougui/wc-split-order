@@ -1,9 +1,7 @@
 <?php
 
 /**
- * Provide a admin area view for the plugin
- *
- * This file is used to markup the admin-facing aspects of the plugin.
+ * Provide the order area view for the plugin's button
  *
  * @link       http://richpress.org
  * @since      1.0.0
@@ -14,3 +12,4 @@
 ?>
 
 <!-- This file should primarily consist of HTML with a little bit of PHP. -->
+<button type="button" class="button" >Move to split order</button>
