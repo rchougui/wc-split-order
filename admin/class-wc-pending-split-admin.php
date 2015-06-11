@@ -106,10 +106,8 @@ class Wc_Pending_Split_Admin {
 	 * @since    1.0.0
 	 */
 	public function split_order_button( $order ) {
-		if("wc-failed" == $order->post_status) {
 			$order_id = $order->id;
 			require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/wc-pending-split-button.php';
-		}
 	}
 	/**
 	 * Handler for "split_order_items" ajax call.
