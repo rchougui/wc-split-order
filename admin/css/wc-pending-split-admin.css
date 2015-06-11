@@ -2,3 +2,12 @@
  * All of the CSS for your admin-specific functionality should be
  * included in this file.
  */
+ #wc_split_button, .upline {
+	float:left;
+	margin-left:15px;
+ }
+ .bulk-actions {
+ 	border-right: 2px solid #bbb;
+ 	
+ 	padding-right:15px;
+ }
