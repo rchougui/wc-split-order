@@ -23,7 +23,7 @@
 					<h1>Move products to split order</h1>
 				</header>
 				<article>
-					
+					<table></table>
 				</article>
 				<footer>
 					<div class="inner">
