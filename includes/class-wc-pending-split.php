@@ -151,11 +151,14 @@ class Wc_Pending_Split {
 	private function define_admin_hooks() {
 
 		$plugin_admin = new Wc_Pending_Split_Admin( $this->get_plugin_name(), $this->get_version() );
-
+		//static assets
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
+		//main functions
 		$this->loader->add_action( 'woocommerce_order_item_add_action_buttons', $plugin_admin , 'split_order_button' );
 		$this->loader->add_action( 'wp_ajax_split_order_items', $plugin_admin ,'split_order_items_callback' );
+		//naming convetion.
+		$this->loader->add_filter( 'woocommerce_order_number', $plugin_admin ,'split_order_naming_display' );
 	}
 
 	/**

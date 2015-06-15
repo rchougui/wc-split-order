@@ -141,6 +141,20 @@ class Wc_Pending_Split_Admin {
 
 		return $order->id;
 
+	/**
+	 * Identify and changes the names of orders created with this plugin.
+	 *
+	 * @since    1.0.0
+	 */
+	public function split_order_naming_display($name){
+		if(get_post_meta( $name, '_is_split', true ) == true){
+			$original_order_id = get_post_meta( $name, '_split_from', true );
+			/**
+			*@todo: make the "-1" a sequence in case multiple split orders (-1,-2,-3...)
+			*/
+			return $original_order_id."-1";
+		}
+		return $name;
 	}
 }
 
