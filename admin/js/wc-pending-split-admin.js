@@ -47,11 +47,22 @@
 				this.remove();
 			},
 			addButton: function( e ) {
-				alert('moving now')
+
 				/*
 				$.post(ajaxurl, {'action': 'split_order_items', 'order_id': order_id, 'order_item_ids': order_item_ids}, function(data, textStatus, xhr) {
 					$("#order_line_items .item").has('.check-column input:checked').remove();
 				});*/
+				var orderdata = {
+					order_id: woocommerce_admin_meta_boxes.post_id,
+					items:    $( 'table.split-table :input[name]' ).serialize(),
+					action:   'split_order_items',
+					security: wc_split_order.split_order_items_nonce
+				};
+				$.post(ajaxurl, orderdata, function(data, textStatus, xhr) {
+					//force a reload by mimicking a cancel edition event.
+					$('button.cancel-action').attr('data-reload', 'true').click();
+				});
+	
 				this.closeButton( e );
 			},
 

@@ -100,6 +100,9 @@ class Wc_Pending_Split_Admin {
 	 * @since    1.0.0
 	 */
 	public function split_order_items_callback() {
+		//Security
+		check_ajax_referer( 'split_order_items', 'security' );
+
 		//Bail if missing information
 		if(!isset($_POST['order_id']) || !isset($_POST['order_item_ids'])) {
 			return false;
