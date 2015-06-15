@@ -58,7 +58,7 @@
 
 		});
 
-		$('#wc_split_button').click(function(){
+		$('#woocommerce-order-items').on('click', '#wc_split_button', function(){
 						
 			var WCSplitModal = new WCSplitBackboneModal();
 			
