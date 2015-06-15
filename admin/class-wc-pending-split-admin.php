@@ -107,7 +107,10 @@ class Wc_Pending_Split_Admin {
 		if(!isset($_POST['order_id']) || !isset($_POST['items'])) {
 			return false;
 		}
-
+		//Bail if user can't edit order.
+		if ( ! current_user_can( 'edit_shop_orders' ) ) {
+			die(-1);
+		}
 		// Parse the jQuery serialized items
 		$items= array();
 		parse_str( $_POST['items'], $items );
