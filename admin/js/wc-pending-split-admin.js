@@ -24,12 +24,16 @@
 				
 
 				$(items).each(function(index, el) {
-					$content.find('table').append(
-						'<tr>'+
-							'<td>'+el.thumb+'</td>'+
+					$content.find('table tbody').append(
+						'<tr class="split-item">'+
+							'<td class="thumb">'+el.thumb+'</td>'+
 							'<td>'+el.name+'</td>'+
-							'<td>'+el.item_cost_view+'</td>'+
-							'<td><input type="number" step="1" min="1" data-max_qty="'+parseInt(el.max_qty)+'" autocomplete="off"  placeholder="1" value="1" size="4" class="move-quantity"></td>'+
+							'<td class="cost" data-cost="'+el.item_cost+'">'+el.item_cost_view+'</td>'+
+							'<td><input class="move-quantity" type="number" name="order_item_qty['+el.item_id+']" step="1" min="0" max="'+parseInt(el.max_qty)+'"data-max_qty="'+parseInt(el.max_qty)+'" autocomplete="off"  placeholder="1" value="1" size="4"></td>'+
+							'<td class="total"><span>'+el.item_cost_view+
+							'</span><input type="hidden" name="line_total['+el.item_id+']" value=""/>'+
+							'<input type="hidden" name="line_subtotal['+el.item_id+']" value="" />'+
+							'</td>'+
 						'</tr>'
 						);
 				});
@@ -76,7 +80,7 @@
 			//retrieve a list of objects from the selected products to be moved.
 			var order_item_ids=[];
 
-			$("#order_line_items .item").has('.check-column input:checked').each(function(index, el) {
+			$("#woocommerce-order-items .item").has('.check-column input:checked').each(function(index, el) {
 				order_item_ids.push({
 					item_id : $(el).data('order_item_id'),
 					thumb : $(el).find('.thumb').html(),
@@ -92,9 +96,15 @@
 				WCSplitModal.render(order_item_ids);
 				//prevent user from moving products more than their original quantity.
 				$('body').on('change', '.move-quantity', function(e){
-					if($(this).val() > $(this).data('max_qty')){
+					var qty = $(this).val();
+					var cost = $(this).parent().siblings('.cost').data('cost');
+					if(qty > $(this).data('max_qty')){
 						$(this).val($(this).data('max_qty'));
 					}
+					var line_subtotal = cost*qty;
+					$(this).parent().siblings('.total').find('span').html(accounting.formatMoney(line_subtotal, { symbol: woocommerce_admin_meta_boxes.currency_format_symbol,  format: woocommerce_admin_meta_boxes.currency_format }));
+					//We won't be using discounts for now, so applying subtotal to all total fields
+					$(this).parent().siblings('.total').find('input').val(line_subtotal);
 				})
 			}
 			

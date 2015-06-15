@@ -2,12 +2,29 @@
  * All of the CSS for your admin-specific functionality should be
  * included in this file.
  */
- #wc_split_button, .upline {
+#wc_split_button, .upline {
 	float:left;
 	margin-left:15px;
- }
- .bulk-actions {
- 	border-right: 2px solid #bbb;
- 	
- 	padding-right:15px;
- }
+}
+.bulk-actions {
+	border-right: 2px solid #bbb;
+	
+	padding-right:15px;
+}
+.split-item {
+
+}
+.split-item .thumb img{
+	padding: 1px;
+	margin: 0;
+	border: 1px solid #dfdfdf;
+	vertical-align: middle;
+	width: 21px;
+	height: 21px;
+}
+.split-item .cost {
+	text-align: right
+}
+.split-item .move-quantity {
+	width:50px;
+}
