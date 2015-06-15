@@ -12,7 +12,7 @@
 ?>
 
 
-<button type="button" class="button" id="wc_split_button" data-order_id="<?php echo $order_id;?>">Move to split order</button>
+<button type="button" class="button" id="wc_split_button">Move to split order</button>
 
 <script type="text/template" id="wc-modal-split-products">
 	<div class="wc-backbone-modal">
@@ -23,11 +23,22 @@
 					<h1>Move products to split order</h1>
 				</header>
 				<article>
-					<table></table>
+					<table class="split-table">
+						 <colgroup>
+						    <col style="width:10%">
+						    <col style="width:50%">
+						    <col style="width:15%">
+						    <col style="width:10%">
+						    <col style="width:15%">
+						  </colgroup> 
+						  <tbody>
+						  	
+						  </tbody>
+					</table>
 				</article>
 				<footer>
 					<div class="inner">
-						<button id="btn-split" class="button button-primary button-large" data-order_id="<?php echo $order_id;?>">Move</button>
+						<button id="btn-split" class="button button-primary button-large">Move</button>
 					</div>
 				</footer>
 			</section>
