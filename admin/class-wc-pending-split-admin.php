@@ -73,11 +73,15 @@ class Wc_Pending_Split_Admin {
 	public function enqueue_scripts() {
 
 		wp_register_script($this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/wc-pending-split-admin.js', array( 'jquery' ,'underscore', 'backbone'), $this->version, false );
-		$js_data = array(
-			'split_order_items_nonce' => wp_create_nonce( 'split_order_items' ),
-		);
-		wp_localize_script( $this->plugin_name, 'wc_split_order', $js_data );
-		wp_enqueue_script( $this->plugin_name);
+
+		$screen = get_current_screen();
+		if ( in_array( str_replace( 'edit-', '', $screen->id ), wc_get_order_types( 'order-meta-boxes' ) ) ) {
+			$js_data = array(
+				'split_order_items_nonce' => wp_create_nonce( 'split_order_items' ),
+			);
+			wp_localize_script( $this->plugin_name, 'wc_split_order', $js_data );
+			wp_enqueue_script( $this->plugin_name);
+		}
 
 	}
 
