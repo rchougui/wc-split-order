@@ -104,24 +104,51 @@ class Wc_Pending_Split_Admin {
 		check_ajax_referer( 'split_order_items', 'security' );
 
 		//Bail if missing information
-		if(!isset($_POST['order_id']) || !isset($_POST['order_item_ids'])) {
+		if(!isset($_POST['order_id']) || !isset($_POST['items'])) {
 			return false;
 		}
 
-		//Sanitize input
-		$order_id = intval( $_POST['order_id'] );
-		$order_item_ids = array();
-		foreach ($_POST['order_item_ids'] as $item_id) {
-			$order_item_ids[] = intval($item_id);
-		}
+		// Parse the jQuery serialized items
+		$items= array();
+		parse_str( $_POST['items'], $items );
+		
+		// Storing the original order
+		$order_id = $_POST['order_id'];
+		$original_order = new WC_Order($order_id);
 
 		//Creating new order
-		$new_order = $this->create_sub_order($order_id);
-		
-		foreach ($order_item_ids as $item_id) {
-			//update the order id of the selected item to new created split order.
-			wc_update_order_item($item_id, array('order_id'=>$new_order));
+		$new_order = $this->create_sub_order($original_order);
+
+		foreach($items['order_item_id'] as $order_item_id){
+			// Get original line item specifications (product and qty)
+			$product_id = $original_order->get_item_meta($order_item_id,'_product_id', true);
+			$max_qty    = $original_order->get_item_meta($order_item_id,'_qty', true);
+			
+			// Validate the WC_product object of the current item to edit
+			$_product   = wc_get_product( $product_id );
+			if($_product){
+				$new_qty = (isset($items["order_item_qty"][$order_item_id])) ? $items["order_item_qty"][$order_item_id] : 1;
+				// Add the new line to the newly created order.
+				$new_order->add_product($_product, $new_qty);
+				
+				// Add order note for future reference.
+				$new_order->add_order_note( sprintf( __( 'Split Order created from original order #%s', 'woocommerce' ), $order_id) );
+
+				// Update the line out of the original order
+				$updated_qty = $max_qty - $new_qty;
+				
+				if($updated_qty > 0) {
+					$args['qty'] = $updated_qty;
+					$original_order->update_product( $order_item_id, $_product, $args);
+				}else {
+					// All the available quantity has been moved, no longer need the item.
+					wc_delete_order_item($order_item_id);
+				}
+			}
 		}
+
+
+
 		echo "success";
 
 	}
@@ -131,15 +158,54 @@ class Wc_Pending_Split_Admin {
 	 *
 	 * @since    1.0.0
 	 */
-	private function create_sub_order($id = false){
-		$args = array();
-		if ($id) {
-			$original_order = new WC_Order($id);
-			
-		}
+	private function create_sub_order($original_order){
+		
 		$order = wc_create_order();
+		// Identify the new order as a split order by a post meta
+		update_post_meta( $order->id, '_is_split', true );
+		update_post_meta( $order->id, '_split_from',  $original_order->id);
+		/**
+		 * Update the remaining metadata of newly created order via wordpress's meta function,
+		 * since woocommerce's abstract order class provide a __get magic method but no set method,
+		 *  we will set manually.
+		 */
+		update_post_meta( $order->id, '_billing_first_name', $original_order->billing_first_name);
+		update_post_meta( $order->id, '_billing_last_name', $original_order->billing_last_name);
+		update_post_meta( $order->id, '_billing_company', $original_order->billing_company);
+		update_post_meta( $order->id, '_billing_address_1', $original_order->billing_address_1);
+		update_post_meta( $order->id, '_billing_address_2', $original_order->billing_address_2);
+		update_post_meta( $order->id, '_billing_city', $original_order->billing_city);
+		update_post_meta( $order->id, '_billing_state', $original_order->billing_state);
+		update_post_meta( $order->id, '_billing_postcode', $original_order->billing_postcode);
+		update_post_meta( $order->id, '_billing_country', $original_order->billing_country);
+		update_post_meta( $order->id, '_billing_phone', $original_order->billing_phone);
+		update_post_meta( $order->id, '_billing_email', $original_order->billing_email);
+		update_post_meta( $order->id, '_shipping_first_name', $original_order->shipping_first_name);
+		update_post_meta( $order->id, '_shipping_last_name', $original_order->shipping_last_name);
+		update_post_meta( $order->id, '_shipping_company', $original_order->shipping_company);
+		update_post_meta( $order->id, '_shipping_address_1', $original_order->shipping_address_1);
+		update_post_meta( $order->id, '_shipping_address_2', $original_order->shipping_address_2);
+		update_post_meta( $order->id, '_shipping_city', $original_order->shipping_city);
+		update_post_meta( $order->id, '_shipping_state', $original_order->shipping_state);
+		update_post_meta( $order->id, '_shipping_postcode', $original_order->shipping_postcode);
+		update_post_meta( $order->id, '_shipping_country', $original_order->shipping_country);
+		update_post_meta( $order->id, '_cart_discount', $original_order->cart_discount);
+		update_post_meta( $order->id, '_cart_discount_tax', $original_order->cart_discount_tax);
+		update_post_meta( $order->id, '_shipping_method_title', $original_order->shipping_method_title);
+		update_post_meta( $order->id, '_customer_user', $original_order->customer_user);
+		update_post_meta( $order->id, '_order_discount', $original_order->order_discount);
+		update_post_meta( $order->id, '_order_tax', $original_order->order_tax);
+		update_post_meta( $order->id, '_order_shipping_tax', $original_order->order_shipping_tax);
+		update_post_meta( $order->id, '_order_shipping', $original_order->order_shipping);
+		update_post_meta( $order->id, '_order_total', $original_order->order_total);
+		update_post_meta( $order->id, '_order_currency', $original_order->order_currency);
+		update_post_meta( $order->id, '_payment_method', $original_order->payment_method);
+		update_post_meta( $order->id, '_payment_method_title', $original_order->payment_method_title);
+		update_post_meta( $order->id, '_customer_ip_address', $original_order->customer_ip_address);
+		update_post_meta( $order->id, '_customer_user_agent', $original_order->customer_user_agent);
+		return $order;
 
-		return $order->id;
+	}
 
 	/**
 	 * Identify and changes the names of orders created with this plugin.
